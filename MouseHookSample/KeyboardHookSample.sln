@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MouseHookSample", "MouseHookSample\MouseHookSample.csproj", "{135A7FF7-E9DB-4B02-8D2C-35043D062832}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyboardHookSample", "MouseHookSample\KeyboardHookSample.csproj", "{135A7FF7-E9DB-4B02-8D2C-35043D062832}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

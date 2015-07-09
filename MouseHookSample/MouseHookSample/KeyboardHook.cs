@@ -10,6 +10,28 @@ namespace MouseHookSample
     /// </summary>
     class KeyboardHook : IDisposable
     {
+        #region 定数
+        /// <summary>
+        /// キー押し
+        /// </summary>
+        public const int WM_KEYDOWN = 0x0100;
+
+        /// <summary>
+        /// キー離し
+        /// </summary>
+        public const int WM_KEYUP = 0x0101;
+
+        /// <summary>
+        /// システムキー押し
+        /// </summary>
+        public const int WM_SYSKEYDOWN = 0x0104;
+
+        /// <summary>
+        /// システムキー離し
+        /// </summary>
+        public const int WM_SYSKEYUP = 0x0105;
+        #endregion
+
         #region メンバ
         /// <summary>
         /// フック用ハンドル
@@ -23,12 +45,15 @@ namespace MouseHookSample
         /// </summary>
         public KeyboardHook()
         {
+            return;
         }
         #endregion
 
-        #region DllImport
-        [DllImport("MyDLL.dll", CallingConvention = CallingConvention.Cdecl)]
-        private extern static int add(int a, int b);
+        #region イベント
+        /// <summary>
+        /// キーフックイベント
+        /// </summary>
+        public event EventHandler<KeyHookEventArgs> KeyHookEvent;
         #endregion
 
         #region プロパティ
@@ -69,8 +94,8 @@ namespace MouseHookSample
             }
 
             // フックハンドル取得
-            this.mHookHandle = 
-                User32Lib.SetWindowsHookEx(WindowsHookType.WH_KEYBOARD, KeyboardHookProc, GetInstance(), 0);
+            this.mHookHandle =
+                User32Lib.SetWindowsHookEx(WindowsHookType.WH_KEYBOARD_LL, KeyboardHookProc, GetInstance(), 0);
 
             // フック失敗用エラー表示
             if (this.mHookHandle == IntPtr.Zero)
@@ -131,10 +156,49 @@ namespace MouseHookSample
         private IntPtr KeyboardHookProc(int code, IntPtr wParam, IntPtr lParam)
         {
             if (code >= 0)
-                Console.WriteLine((Keys)wParam.ToInt32());
+            {
+                if (this.KeyHookEvent != null)
+                {
+                    int evt_code = (int)wParam;
+                    KBDLLHOOKSTRUCT param = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(KBDLLHOOKSTRUCT));
+                    Keys key = (Keys)param.vkCode;
+
+                    this.KeyHookEvent(this, new KeyHookEventArgs(evt_code, key));
+                }
+            }
 
             return User32Lib.CallNextHookEx(this.mHookHandle, code, wParam, lParam);
         }
         #endregion
     }
+
+    #region 外部型
+    /// <summary>
+    /// キーフックイベント
+    /// </summary>
+    public class KeyHookEventArgs : EventArgs
+    {
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="code">コード</param>
+        /// <param name="key">キー</param>
+        public KeyHookEventArgs(int code, Keys key)
+        {
+            this.Code = code;
+            this.Key = key;
+            return;
+        }
+
+        /// <summary>
+        /// コード
+        /// </summary>
+        public int Code { get; private set; }
+
+        /// <summary>
+        /// キー
+        /// </summary>
+        public Keys Key { get; private set; }
+    }
+    #endregion
 }

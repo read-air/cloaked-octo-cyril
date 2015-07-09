@@ -12,7 +12,15 @@ namespace MouseHookSample
         /// <summary>
         /// キーボードフック
         /// </summary>
+        /// <remarks>
+        /// ネイティブからの呼び出しじゃないと取り扱えないらしい
+        /// </remarks>
         public const int WH_KEYBOARD = 2;
+
+        /// <summary>
+        /// 低水準キーボードフック
+        /// </summary>
+        public const int WH_KEYBOARD_LL = 13;
     }
 
     /// <summary>
@@ -76,5 +84,24 @@ namespace MouseHookSample
         /// <returns>エラーコード</returns>
         [DllImport("Kernel32.dll", CallingConvention = CallingConvention.StdCall)]
         public extern static UInt32 GetLastError();
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct KBDLLHOOKSTRUCT
+    {
+        public UInt32 vkCode;
+        public UInt32 scanCode;
+        public KBDLLHOOKSTRUCTFlags flags;
+        public UInt32 time;
+        public IntPtr dwExtraInfo;
+    }
+
+    [Flags]
+    public enum KBDLLHOOKSTRUCTFlags : uint
+    {
+        LLKHF_EXTENDED = 0x01,
+        LLKHF_INJECTED = 0x10,
+        LLKHF_ALTDOWN = 0x20,
+        LLKHF_UP = 0x80,
     }
 }
