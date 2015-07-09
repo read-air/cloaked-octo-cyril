@@ -1,0 +1,2 @@
+c:\users\read_air\documents\visual studio 2013\Projects\MouseHookSample\MouseHookSample\bin\Debug\MouseHookSample.exe.config
+D:\GitHub\cloaked-octo-cyril\MouseHookSample\MouseHookSample\bin\Debug\MouseHookSample.exe.config
